@@ -4,6 +4,7 @@ import base64, json
 import hashlib, codecs, struct
 import requests
 import time
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -14,8 +15,8 @@ previous_timestamps = {}
 purge_loop_counter = 0
 purge_loops = 120
 
-key_subfolder = '/keys'
-traccar_url = '192.168.7.170:5055'
+key_subfolder = 'keys'
+traccar_url = '192.168.1.69:5055'
 
 def sha256(data):
     digest = hashlib.new("sha256")
@@ -73,7 +74,7 @@ def getAuth(regenerate=False, second_factor='sms'):
 def readkeyfiles():
     privkeys = {}
     names = {}
-    for keyfile in glob.glob(os.path.dirname(os.path.realpath(__file__)) + key_subfolder + '/*.keys'):
+    for keyfile in (Path(__file__).parent / key_subfolder).glob('*.keys'):
         with open(keyfile) as f:
             hashed_adv = priv = None
             name = os.path.basename(keyfile)[:-5]
@@ -105,7 +106,7 @@ def request_reports(privkeys, names, chunk_size=2, max_workers=6):
     all_results = []
 
     def fetch_chunk(priv_chunk, name_chunk):
-        #print(list(name_chunk.keys()))
+        print(list(name_chunk.keys()))
         data = {
             "search": [{
                 "startDate": startdate * 1000,
