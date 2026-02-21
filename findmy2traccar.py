@@ -10,7 +10,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
 from pypush_gsa_icloud import icloud_login_mobileme, generate_anisette_headers
-from datetime import datetime
 
 previous_timestamps = {}
 purge_loop_counter = 0
@@ -165,7 +164,7 @@ def to_traccar(res, names, privkeys):
                 pass
 
 while True:
-    print("Starting new FindMy request round " + datetime.now().strftime("%H:%M:%S"))
+    print("Starting new FindMy request round " + datetime.datetime.now().strftime("%H:%M:%S"))
     privkeys, names = readkeyfiles()
     res = request_reports(privkeys, names, chunk_size=1, max_workers=20)
     to_traccar(res, names, privkeys)
@@ -176,3 +175,4 @@ while True:
         purge_loop_counter = 0
     print("FindMy round completed, sleeping 60 seconds")
     time.sleep(60)
+.
