@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.backends import default_backend
 from pypush_gsa_icloud import icloud_login_mobileme, generate_anisette_headers
+from datetime import datetime
 
 previous_timestamps = {}
 purge_loop_counter = 0
@@ -75,6 +76,7 @@ def readkeyfiles():
     privkeys = {}
     names = {}
     for keyfile in (Path(__file__).parent / key_subfolder).glob('*.keys'):
+        #print("Reading keyfile: " + str(keyfile))
         with open(keyfile) as f:
             hashed_adv = priv = None
             name = os.path.basename(keyfile)[:-5]
@@ -163,9 +165,9 @@ def to_traccar(res, names, privkeys):
                 pass
 
 while True:
-    print("Starting new FindMy request round")
+    print("Starting new FindMy request round " + datetime.now().strftime("%H:%M:%S"))
     privkeys, names = readkeyfiles()
-    res = request_reports(privkeys, names, chunk_size=2, max_workers=20)
+    res = request_reports(privkeys, names, chunk_size=1, max_workers=20)
     to_traccar(res, names, privkeys)
     purge_loop_counter += 1
     if purge_loop_counter == purge_loops:
